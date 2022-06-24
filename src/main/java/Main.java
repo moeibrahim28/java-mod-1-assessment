@@ -4,18 +4,27 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        while (true) {
-            int random = generateRandomNumber(scanner);
+        boolean runValue = true;
+        while (runValue) {
             int difficulty = getDifficulties(scanner);
-            int userNumber = getUserGuess(scanner);
-            checkGuess(userNumber, random, difficulty);
+            if (difficulty != 4) {
+                int lowerBound = getLowerBound(scanner);
+                int upperBound = getUpperBound(scanner, lowerBound);
+                int random = generateRandomNumber(scanner, lowerBound, upperBound);
+                int userNumber = getUserGuess(scanner, lowerBound, upperBound);
+                checkGuess(userNumber, random, difficulty);
+            } else {
+                runValue = false;
+            }
         }
 
     }
 
-    public static int generateRandomNumber(Scanner scanner) {
+    public static int generateRandomNumber(Scanner scanner, int lowerBound, int upperBound) {
         Random random = new Random();
-        int randomInt = random.nextInt(10);
+        int range = upperBound - lowerBound;
+        int randomInt = random.nextInt(range);
+        randomInt += lowerBound;
         return randomInt;
     }
 
@@ -39,7 +48,6 @@ public class Main {
         switch (difficultyNumber) {
             case 1:
                 System.out.println(difficulties[0]);
-                ;
                 break;
             case 2:
                 System.out.println(difficulties[1]);
@@ -49,7 +57,6 @@ public class Main {
                 break;
             case 4:
                 System.out.println("Thanks, Bye!");
-                System.exit(0);
                 break;
             default:
                 System.out.println("You are bad at typing numbers 1 to 4");
@@ -61,51 +68,78 @@ public class Main {
 
     }
 
-    public static int getUserGuess(Scanner scanner) {
+    public static int getLowerBound(Scanner scanner) {
+        System.out.println("Enter a lower bound:");
+        String userInput = scanner.nextLine();
+        int input = getInput(userInput);
+
+        if (input >= 0) {
+            return input;
+        } else {
+            System.out.println("Lower bound must be great than or equal to 0.");
+            input = getLowerBound(scanner);
+        }
+        return input;
+    }
+
+    public static int getUpperBound(Scanner scanner, int lowerBound) {
+        System.out.println("Enter a upper bound:");
+        String userInput = scanner.nextLine();
+        int input = getInput(userInput);
+
+        if (input >= 0 && input > lowerBound) {
+            return input;
+        } else {
+            System.out.println("Upper bound must be great than or equal to lower bound.");
+            input = getUpperBound(scanner, lowerBound);
+        }
+        return input;
+
+    }
+
+    public static int getUserGuess(Scanner scanner, int lowerBound, int upperBound) {
         System.out.println("Enter your guess:");
         String userInput = scanner.nextLine();
         int input = getInput(userInput);
 
-        if (input <= 10 && input >= 0) {
+        if (input <= upperBound && input >= lowerBound) {
             return input;
-        } else if (input > 10) {
-            System.out.println("Your guess is outside the bound 0-10. Try again.");
-            input = getUserGuess(scanner);
-        } else {
-            System.out.println("That is not a number. Try again.");
-            input = getUserGuess(scanner);
+        } else if (input > upperBound || input < lowerBound) {
+            System.out.println("That is not a valid number. Try again with a number between the bound " + lowerBound
+                    + "-" + upperBound + ".");
+            input = getUserGuess(scanner, lowerBound, upperBound);
         }
-
         return input;
 
     }
 
     public static void checkGuess(int userGuess, int random, int difficulty) {
-        if (difficulty == 1) {
-            if (userGuess >= random) {
-                System.out.println("You win!");
-            } else {
-                System.out.println("The computer won :( Try again!");
-            }
-        } else if (difficulty == 2) {
-            if (userGuess > random) {
-                System.out.println("You win!");
-            } else {
-                System.out.println("The computer won :( Try again!");
-            }
-        } else if (difficulty == 3) {
-            if (userGuess == random) {
-                System.out.println("You win!");
-            } else {
-                System.out.println("The computer won :( Try again!");
-            }
+        boolean userWins = false;
+        switch (difficulty) {
+            case 1:
+                userWins = userGuess >= random;
+                break;
+            case 2:
+                userWins = userGuess > random;
+                break;
+            case 3:
+                userWins = userGuess == random;
+                break;
+
         }
+        if (userWins == true) {
+            System.out.println("You win!");
+        } else {
+            System.out.println("The computer won :( Try again!");
+        }
+
     }
 
     private static int getInput(String sampleString) {
         try {
             return Integer.parseInt(sampleString);
         } catch (Exception e) {
+
             return -1;
         }
     }
