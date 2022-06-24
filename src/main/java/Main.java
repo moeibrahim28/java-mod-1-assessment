@@ -3,24 +3,23 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-
+        Scanner scanner = new Scanner(System.in);
         while (true) {
-            int random = generateRandomNumber();
-            int difficulty = getDifficulties();
-            int userNumber = getUserGuess();
+            int random = generateRandomNumber(scanner);
+            int difficulty = getDifficulties(scanner);
+            int userNumber = getUserGuess(scanner);
             checkGuess(userNumber, random, difficulty);
         }
 
     }
 
-    public static int generateRandomNumber() {
+    public static int generateRandomNumber(Scanner scanner) {
         Random random = new Random();
         int randomInt = random.nextInt(10);
         return randomInt;
     }
 
-    public static int getDifficulties() {
-        Scanner scanner = new Scanner(System.in);
+    public static int getDifficulties(Scanner scanner) {
 
         String[] difficulties = new String[3];
         String difficultyString;
@@ -54,7 +53,7 @@ public class Main {
                 break;
             default:
                 System.out.println("You are bad at typing numbers 1 to 4");
-                difficultyNumber = getDifficulties();
+                difficultyNumber = getDifficulties(scanner);
                 break;
         }
 
@@ -62,9 +61,8 @@ public class Main {
 
     }
 
-    public static int getUserGuess() {
+    public static int getUserGuess(Scanner scanner) {
         System.out.println("Enter your guess:");
-        Scanner scanner = new Scanner(System.in);
         String userInput = scanner.nextLine();
         int input = getInput(userInput);
 
@@ -72,10 +70,10 @@ public class Main {
             return input;
         } else if (input > 10) {
             System.out.println("Your guess is outside the bound 0-10. Try again.");
-            input = getUserGuess();
+            input = getUserGuess(scanner);
         } else {
             System.out.println("That is not a number. Try again.");
-            input = getUserGuess();
+            input = getUserGuess(scanner);
         }
 
         return input;
@@ -91,7 +89,7 @@ public class Main {
             }
         } else if (difficulty == 2) {
             if (userGuess > random) {
-
+                System.out.println("You win!");
             } else {
                 System.out.println("The computer won :( Try again!");
             }
