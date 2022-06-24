@@ -9,7 +9,7 @@ public class Main {
             int difficulty = getDifficulties(scanner);
             if (difficulty != 4) {
                 int lowerBound = getLowerBound(scanner);
-                int upperBound = getUpperBound(scanner);
+                int upperBound = getUpperBound(scanner, lowerBound);
                 int random = generateRandomNumber(scanner, lowerBound, upperBound);
                 int userNumber = getUserGuess(scanner, lowerBound, upperBound);
                 checkGuess(userNumber, random, difficulty);
@@ -73,15 +73,26 @@ public class Main {
         String userInput = scanner.nextLine();
         int input = getInput(userInput);
 
+        if (input >= 0) {
+            return input;
+        } else {
+            System.out.println("Lower bound must be great than or equal to 0.");
+            input = getLowerBound(scanner);
+        }
         return input;
-
     }
 
-    public static int getUpperBound(Scanner scanner) {
+    public static int getUpperBound(Scanner scanner, int lowerBound) {
         System.out.println("Enter a upper bound:");
         String userInput = scanner.nextLine();
         int input = getInput(userInput);
 
+        if (input >= 0 && input > lowerBound) {
+            return input;
+        } else {
+            System.out.println("Upper bound must be great than or equal to lower bound.");
+            input = getUpperBound(scanner, lowerBound);
+        }
         return input;
 
     }
